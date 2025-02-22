@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        environment: ${{ github.event_name == 'workflow_dispatch' && [github.event.inputs.environment] || ['dev', 'stage', 'prod'] }}
+        environment: ['dev', 'stage', 'prod']
 
     steps:
     - name: Checkout code
@@ -43,14 +43,19 @@ jobs:
 
     - name: Run Newman Tests
       run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          env="${{ github.event.inputs.environment }}"
+        else
+          env="${{ matrix.environment }}"
+        fi
         newman run "Simple Price Test.postman_collection.json" \
-        -e "${{ matrix.environment }}.postman_environment.json" \
+        -e "${env}.postman_environment.json" \
         -r cli,htmlextra \
-        --reporter-htmlextra-export "newman-report-${{ matrix.environment }}.html"
+        --reporter-htmlextra-export "newman-report-${env}.html"
 
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: newman-test-results-${{ matrix.environment }}
-        path: newman-report-${{ matrix.environment }}.html
+        path: newman-report-*.html
