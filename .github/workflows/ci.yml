@@ -23,16 +23,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        environment: ['dev', 'stage', 'prod']
-
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '16'
 
@@ -44,18 +40,22 @@ jobs:
     - name: Run Newman Tests
       run: |
         if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-          env="${{ github.event.inputs.environment }}"
+          environments=("${{ github.event.inputs.environment }}")
         else
-          env="${{ matrix.environment }}"
+          environments=("dev" "stage" "prod")
         fi
-        newman run "Simple Price Test.postman_collection.json" \
-        -e "${env}.postman_environment.json" \
-        -r cli,htmlextra \
-        --reporter-htmlextra-export "newman-report-${env}.html"
+        
+        for env in "${environments[@]}"; do
+          echo "Running tests for $env environment"
+          newman run "Simple Price Test.postman_collection.json" \
+          -e "${env}.postman_environment.json" \
+          -r cli,htmlextra \
+          --reporter-htmlextra-export "newman-report-${env}.html"
+        done
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: newman-test-results-${{ matrix.environment }}
+        name: newman-test-results
         path: newman-report-*.html
