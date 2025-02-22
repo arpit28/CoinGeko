@@ -19,7 +19,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  # Use the version of Node.js you prefer
+        node-version: '16'  # Update this line to use Node.js version 16
 
     - name: Install Newman
       run: |
