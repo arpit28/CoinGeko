@@ -20,4 +20,20 @@ jobs:
           sudo snap install k6
 
       - name: Run K6 Performance Test
-        run: k6 run performanceTest.js
+        run: k6 run performanceTest.js --out json=performanceTest.json
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Generate HTML Report
+        run: |
+          npm install -g html-reporter
+          html-reporter -i performanceTest.json -o performanceTest.html
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: k6-performance-test-report
+          path: performanceTest.html
