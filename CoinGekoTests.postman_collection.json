@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "54412c8b-48e3-40ba-8cef-def51245fd71",
+		"name": "CoinGekoTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "590107"
+	},
+	"item": [
+		{
+			"name": "Simple Price Endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains expected cryptocurrency price\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(pm.environment.get(\"crypto_id\"));",
+							"    pm.expect(jsonData[pm.environment.get(\"crypto_id\")]).to.have.property(pm.environment.get(\"currency\"));",
+							"    pm.expect(jsonData[pm.environment.get(\"crypto_id\")][pm.environment.get(\"currency\")]).to.be.a(\"number\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/simple/price?ids={{crypto_id}}&vs_currencies={{currency}}&api_key={{api_key}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"simple",
+						"price"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "{{crypto_id}}"
+						},
+						{
+							"key": "vs_currencies",
+							"value": "{{currency}}"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"{{base_url}}/simple/price?ids={{crypto_id}}&vs_currencies={{currency}}&x_cg_demo_api_key={{api_key}}\"\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Coins List Endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verify status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"// Parse response body",
+							"const responseData = pm.response.json();",
+							"",
+							"// Verify response schema",
+							"pm.test(\"All coins have required properties\", function () {",
+							"    const requiredProperties = ['id', 'symbol', 'name'];",
+							"    ",
+							"    responseData.forEach((coin, index) => {",
+							"        requiredProperties.forEach(prop => {",
+							"            pm.expect(coin, `Coin at index ${index}`).to.have.property(prop);",
+							"        });",
+							"    });",
+							"});",
+							"",
+							"",
+							"// Verify common coins exist",
+							"pm.test(\"Common coins exist in the list\", function () {",
+							"    const coins = responseData.map(coin => coin.id);",
+							"    pm.expect(coins).to.include('bitcoin');",
+							"    pm.expect(coins).to.include('ethereum');",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/coins/list",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"coins",
+						"list"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"{{base_url}}/simple/price?ids={{crypto_id}}&vs_currencies={{currency}}&x_cg_demo_api_key={{api_key}}\"\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Coin Markets Endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response should be an array\", function () {",
+							"    pm.expect(pm.response.json()).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Market data should contain expected fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData[0]).to.have.property('id', pm.environment.get(\"crypto_id\"));",
+							"    pm.expect(responseData[0]).to.have.property('symbol', pm.environment.get(\"crypto_symbol\"));",
+							"    pm.expect(responseData[0]).to.have.property('current_price');",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/coins/markets?vs_currency={{currency}}&ids={{crypto_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"coins",
+						"markets"
+					],
+					"query": [
+						{
+							"key": "vs_currency",
+							"value": "{{currency}}"
+						},
+						{
+							"key": "ids",
+							"value": "{{crypto_id}}"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"{{base_url}}/simple/price?ids={{crypto_id}}&vs_currencies={{currency}}&x_cg_demo_api_key={{api_key}}\"\n"
+			},
+			"response": []
+		}
+	]
+}
