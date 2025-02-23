@@ -1,32 +1,19 @@
 name: K6 Performance Tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_dispatch:  # This allows manual execution
 
 jobs:
-  k6_test:
-    name: Run K6 Tests
+  performance-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Run k6 test
-        uses: grafana/k6-action@v0.3.1
-        with:
-          filename: performanceTest.js
+      - name: Install K6
+        run: |
+          sudo apt update
+          sudo apt install -y k6
 
-      - name: Upload performance test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: k6-report
-          path: summary.json
-          retention-days: 30
+      - name: Run K6 Performance Test
+        run: k6 run performanceTest.js
