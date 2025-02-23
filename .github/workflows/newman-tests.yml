@@ -43,7 +43,7 @@ jobs:
         if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
           environments=("${{ github.event.inputs.environment }}")
         else
-          environments=("dev" "stage" "prod")
+          environments=("dev")
         fi
         
         for env in "${environments[@]}"; do
