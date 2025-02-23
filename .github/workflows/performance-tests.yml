@@ -10,10 +10,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install K6
+      - name: Install Snapd
         run: |
           sudo apt update
-          sudo apt install -y k6
+          sudo apt install -y snapd
+
+      - name: Install K6 using Snap
+        run: |
+          sudo snap install k6
 
       - name: Run K6 Performance Test
         run: k6 run performanceTest.js
