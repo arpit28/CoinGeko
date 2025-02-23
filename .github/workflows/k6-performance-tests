@@ -11,7 +11,7 @@ on:
 
 jobs:
   k6_test:
-    name: k6 performance test
+    name: Run K6 Tests
     runs-on: ubuntu-latest
 
     steps:
