@@ -21,6 +21,7 @@ on:
 
 jobs:
   newman_tests:
+    name: Run Newman Tests
     runs-on: ubuntu-latest
 
     steps:
