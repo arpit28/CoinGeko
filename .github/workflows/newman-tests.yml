@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Newman API Tests
 
 on:
   push:
@@ -20,7 +20,7 @@ on:
         - prod
 
 jobs:
-  test:
+  newman_tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,13 +47,13 @@ jobs:
         
         for env in "${environments[@]}"; do
           echo "Running tests for $env environment"
-          newman run "Simple Price Test.postman_collection.json" \
+          newman run "CoinGekoTests.postman_collection.json" \
           -e "${env}.postman_environment.json" \
           -r cli,htmlextra \
           --reporter-htmlextra-export "newman-report-${env}.html"
         done
 
-    - name: Upload test results
+    - name: Upload Newman test results
       if: always()
       uses: actions/upload-artifact@v4
       with:
